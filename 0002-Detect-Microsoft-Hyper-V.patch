@@ -1,0 +1,54 @@
+From f6216c969c6ad2f3c5761506c10431299cae928c Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Wed, 15 Dec 2010 19:54:15 +0000
+Subject: [PATCH 02/18] Detect Microsoft Hyper-V.
+
+Based on a description on MSDN:
+http://blogs.msdn.com/b/sqlosteam/archive/2010/10/30/is-this-real-the-metaphysics-of-hardware-virtualization.aspx
+
+Cherry picked from commit ee4ad55ae2b9294d03e45a364c70c42f945d2fc7.
+
+Not tested.  Hyper-V also supports more detail through the CPUID
+instruction, which we don't yet display.
+---
+ virt-what.in  |    6 ++++++
+ virt-what.pod |    6 ++++++
+ 2 files changed, 12 insertions(+), 0 deletions(-)
+
+diff --git a/virt-what.in b/virt-what.in
+index e006b95..ddd6faf 100644
+--- a/virt-what.in
++++ b/virt-what.in
+@@ -88,6 +88,12 @@ elif echo "$dmi" | grep -q 'Manufacturer: VMware'; then
+     echo vmware
+ fi
+ 
++# Check for Hyper-V.
++# http://blogs.msdn.com/b/sqlosteam/archive/2010/10/30/is-this-real-the-metaphysics-of-hardware-virtualization.aspx
++if [ "$cpuid" = "Microsoft Hv" ]; then
++    echo hyperv
++fi
++
+ # Check for VirtualPC.
+ 
+ if echo "$dmi" | grep -q 'Manufacturer: Microsoft Corporation'; then
+diff --git a/virt-what.pod b/virt-what.pod
+index 9a0cc1c..d5888c2 100644
+--- a/virt-what.pod
++++ b/virt-what.pod
+@@ -25,6 +25,12 @@ don't know about or cannot detect.
+ 
+ =over 4
+ 
++=item B<hyperv>
++
++This is Hyper-V.
++
++Status: from MSDN description, not tested.
++
+ =item B<kvm>
+ 
+ This is KVM.
+-- 
+1.7.1
+

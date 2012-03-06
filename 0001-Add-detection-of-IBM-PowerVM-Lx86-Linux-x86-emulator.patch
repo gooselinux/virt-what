@@ -1,0 +1,70 @@
+From 14a1dd7f703ff5dfe4d919f9f0d18ca7a4c07e8a Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Mon, 17 Jan 2011 10:35:31 +0000
+Subject: [PATCH 01/18] Add detection of IBM PowerVM Lx86 Linux/x86 emulator.
+
+Cherry picked from commit 1c5557995137f53579582e91986f57ce6b4befff.
+---
+ virt-what.in  |    7 ++++++-
+ virt-what.pod |   12 +++++++++---
+ 2 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/virt-what.in b/virt-what.in
+index 96c18b4..e006b95 100644
+--- a/virt-what.in
++++ b/virt-what.in
+@@ -1,6 +1,6 @@
+ #!/bin/bash -
+ # @configure_input@
+-# Copyright (C) 2008-2010 Red Hat Inc.
++# Copyright (C) 2008-2011 Red Hat Inc.
+ #
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+@@ -116,6 +116,11 @@ if grep -q 'UML' /proc/cpuinfo; then
+     echo uml
+ fi
+ 
++# Check for IBM PowerVM Lx86 Linux/x86 emulator.
++if grep -q '^vendor_id.*PowerVM Lx86' /proc/cpuinfo; then
++    echo powervm_lx86
++fi
++
+ # Check for Xen.
+ 
+ if [ "$cpuid" = "XenVMMXenVMM" ]; then
+diff --git a/virt-what.pod b/virt-what.pod
+index 5f028e3..9a0cc1c 100644
+--- a/virt-what.pod
++++ b/virt-what.pod
+@@ -25,6 +25,12 @@ don't know about or cannot detect.
+ 
+ =over 4
+ 
++=item B<kvm>
++
++This is KVM.
++
++Status: confirmed by RWMJ.
++
+ =item B<openvz>
+ 
+ The guest appears to be running inside an OpenVZ or Virtuozzo
+@@ -32,11 +38,11 @@ container.
+ 
+ Status: contributed by Evgeniy Sokolov
+ 
+-=item B<kvm>
++=item B<powervm_lx86>
+ 
+-This is KVM.
++The guest is running inside IBM PowerVM Lx86 Linux/x86 emulator.
+ 
+-Status: confirmed by RWMJ.
++Status: data supplied by Jeffrey Scheel, not confirmed
+ 
+ =item B<qemu>
+ 
+-- 
+1.7.1
+

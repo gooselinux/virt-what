@@ -1,0 +1,41 @@
+From 8ba69903b5ee7e652336fc5226128ff5414fe61f Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Wed, 19 Jan 2011 18:47:45 +0000
+Subject: [PATCH 13/18] Add missing files to EXTRA_DIST.
+ (cherry picked from commit 826e754c14b9c5cfeb2fef9341e96675b372aeb1)
+
+---
+ Makefile.am |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index fdb32aa..601a679 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -40,6 +40,12 @@ EXTRA_DIST = \
+ 	tests/qemu/sbin/virt-what-cpuid-helper \
+ 	tests/rhel5-xen-dom0/proc/cpuinfo \
+ 	tests/rhel5-xen-dom0/proc/self/status \
++	tests/rhel5-xen-dom0/proc/xen/balloon \
++	tests/rhel5-xen-dom0/proc/xen/capabilities \
++	tests/rhel5-xen-dom0/proc/xen/privcmd \
++	tests/rhel5-xen-dom0/proc/xen/xenbus \
++	tests/rhel5-xen-dom0/proc/xen/xsd_kva \
++	tests/rhel5-xen-dom0/proc/xen/xsd_port \
+ 	tests/rhel5-xen-dom0/sbin/dmidecode \
+ 	tests/rhel5-xen-dom0/sbin/id \
+ 	tests/rhel5-xen-dom0/sbin/virt-what-cpuid-helper \
+@@ -50,6 +56,10 @@ EXTRA_DIST = \
+ 	tests/rhel5-xen-domU-hvm/sbin/virt-what-cpuid-helper \
+ 	tests/rhel5-xen-domU-pv/proc/cpuinfo \
+ 	tests/rhel5-xen-domU-pv/proc/self/status \
++	tests/rhel5-xen-domU-pv/proc/xen/balloon \
++	tests/rhel5-xen-domU-pv/proc/xen/capabilities \
++	tests/rhel5-xen-domU-pv/proc/xen/privcmd \
++	tests/rhel5-xen-domU-pv/proc/xen/xenbus \
+ 	tests/rhel5-xen-domU-pv/sbin/dmidecode \
+ 	tests/rhel5-xen-domU-pv/sbin/id \
+ 	tests/rhel5-xen-domU-pv/sbin/virt-what-cpuid-helper \
+-- 
+1.7.1
+

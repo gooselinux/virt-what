@@ -1,0 +1,48 @@
+From 3d3f2db289c138b51439f9bd5de3557fb2d322b5 Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Tue, 18 Jan 2011 17:40:26 +0000
+Subject: [PATCH 08/18] Add test files to EXTRA_DIST.
+ (cherry picked from commit e5711e7e55f0d4b5e7559828ee675efc052d6ccd)
+
+---
+ Makefile.am |   24 +++++++++++++++++++++++-
+ 1 files changed, 23 insertions(+), 1 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index f065cc8..b193d63 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -15,7 +15,29 @@
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-EXTRA_DIST = virt-what.in virt-what.pod
++EXTRA_DIST = \
++	virt-what.in \
++	virt-what.pod \
++	tests/baremetal/proc/cpuinfo \
++	tests/baremetal/sbin/dmidecode \
++	tests/baremetal/sbin/id \
++	tests/baremetal/sbin/virt-what-cpuid-helper \
++	tests/esx4.1/proc/cpuinfo \
++	tests/esx4.1/sbin/dmidecode \
++	tests/esx4.1/sbin/id \
++	tests/esx4.1/sbin/virt-what-cpuid-helper \
++	tests/kvm/proc/cpuinfo \
++	tests/kvm/sbin/dmidecode \
++	tests/kvm/sbin/id \
++	tests/kvm/sbin/virt-what-cpuid-helper \
++	tests/qemu/proc/cpuinfo \
++	tests/qemu/sbin/dmidecode \
++	tests/qemu/sbin/id \
++	tests/qemu/sbin/virt-what-cpuid-helper \
++	tests/test-baremetal.sh \
++	tests/test-esx4.1.sh \
++	tests/test-kvm.sh \
++	tests/test-qemu.sh
+ 
+ CLEANFILES = virt-what.1 virt-what.txt
+ 
+-- 
+1.7.1
+

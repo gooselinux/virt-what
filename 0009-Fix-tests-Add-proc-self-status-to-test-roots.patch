@@ -1,0 +1,144 @@
+From f8386ba051cc708c235cacb2273ee2b4f2336946 Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Wed, 19 Jan 2011 16:21:23 +0000
+Subject: [PATCH 09/18] Fix tests: Add /proc/self/status to test roots.
+
+Note that in two cases (esx4.1, qemu) this is an empty
+file because we haven't collected this data yet.
+(cherry picked from commit bf340c74ff8741236d2cf329c457fcc4bc85db7d)
+---
+ Makefile.am                      |    4 +++
+ tests/baremetal/proc/self/status |   39 ++++++++++++++++++++++++++++++++++++++
+ tests/kvm/proc/self/status       |   39 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 82 insertions(+), 0 deletions(-)
+ create mode 100644 tests/baremetal/proc/self/status
+ create mode 100644 tests/esx4.1/proc/self/status
+ create mode 100644 tests/kvm/proc/self/status
+ create mode 100644 tests/qemu/proc/self/status
+
+diff --git a/Makefile.am b/Makefile.am
+index b193d63..43dc91e 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -19,18 +19,22 @@ EXTRA_DIST = \
+ 	virt-what.in \
+ 	virt-what.pod \
+ 	tests/baremetal/proc/cpuinfo \
++	tests/baremetal/proc/self/status \
+ 	tests/baremetal/sbin/dmidecode \
+ 	tests/baremetal/sbin/id \
+ 	tests/baremetal/sbin/virt-what-cpuid-helper \
+ 	tests/esx4.1/proc/cpuinfo \
++	tests/esx4.1/proc/self/status \
+ 	tests/esx4.1/sbin/dmidecode \
+ 	tests/esx4.1/sbin/id \
+ 	tests/esx4.1/sbin/virt-what-cpuid-helper \
+ 	tests/kvm/proc/cpuinfo \
++	tests/kvm/proc/self/status \
+ 	tests/kvm/sbin/dmidecode \
+ 	tests/kvm/sbin/id \
+ 	tests/kvm/sbin/virt-what-cpuid-helper \
+ 	tests/qemu/proc/cpuinfo \
++	tests/qemu/proc/self/status \
+ 	tests/qemu/sbin/dmidecode \
+ 	tests/qemu/sbin/id \
+ 	tests/qemu/sbin/virt-what-cpuid-helper \
+diff --git a/tests/baremetal/proc/self/status b/tests/baremetal/proc/self/status
+new file mode 100644
+index 0000000..ed4a238
+--- /dev/null
++++ b/tests/baremetal/proc/self/status
+@@ -0,0 +1,39 @@
++Name:	cp
++State:	R (running)
++Tgid:	32449
++Pid:	32449
++PPid:	26492
++TracerPid:	0
++Uid:	500	500	500	500
++Gid:	500	500	500	500
++Utrace:	0
++FDSize:	256
++Groups:	10 500 
++VmPeak:	  113756 kB
++VmSize:	  113756 kB
++VmLck:	       0 kB
++VmHWM:	     848 kB
++VmRSS:	     848 kB
++VmData:	     208 kB
++VmStk:	     136 kB
++VmExe:	     112 kB
++VmLib:	    2060 kB
++VmPTE:	      92 kB
++VmSwap:	       0 kB
++Threads:	1
++SigQ:	0/29792
++SigPnd:	0000000000000000
++ShdPnd:	0000000000000000
++SigBlk:	0000000000000000
++SigIgn:	0000000000000000
++SigCgt:	0000000180000000
++CapInh:	0000000000000000
++CapPrm:	0000000000000000
++CapEff:	0000000000000000
++CapBnd:	ffffffffffffffff
++Cpus_allowed:	f
++Cpus_allowed_list:	0-3
++Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
++Mems_allowed_list:	0
++voluntary_ctxt_switches:	1
++nonvoluntary_ctxt_switches:	5
+diff --git a/tests/esx4.1/proc/self/status b/tests/esx4.1/proc/self/status
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/kvm/proc/self/status b/tests/kvm/proc/self/status
+new file mode 100644
+index 0000000..64385c3
+--- /dev/null
++++ b/tests/kvm/proc/self/status
+@@ -0,0 +1,39 @@
++Name:	cat
++State:	R (running)
++Tgid:	1774
++Pid:	1774
++PPid:	1751
++TracerPid:	0
++Uid:	500	500	500	500
++Gid:	500	500	500	500
++Utrace:	0
++FDSize:	256
++Groups:	492 500 
++VmPeak:	  100840 kB
++VmSize:	  100840 kB
++VmLck:	       0 kB
++VmHWM:	     512 kB
++VmRSS:	     512 kB
++VmData:	     180 kB
++VmStk:	      88 kB
++VmExe:	      44 kB
++VmLib:	    1612 kB
++VmPTE:	      44 kB
++VmSwap:	       0 kB
++Threads:	1
++SigQ:	0/7865
++SigPnd:	0000000000000000
++ShdPnd:	0000000000000000
++SigBlk:	0000000000000000
++SigIgn:	0000000000000000
++SigCgt:	0000000000000000
++CapInh:	0000000000000000
++CapPrm:	0000000000000000
++CapEff:	0000000000000000
++CapBnd:	ffffffffffffffff
++Cpus_allowed:	1
++Cpus_allowed_list:	0
++Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
++Mems_allowed_list:	0
++voluntary_ctxt_switches:	0
++nonvoluntary_ctxt_switches:	1
+diff --git a/tests/qemu/proc/self/status b/tests/qemu/proc/self/status
+new file mode 100644
+index 0000000..e69de29
+-- 
+1.7.1
+

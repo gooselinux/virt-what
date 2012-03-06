@@ -1,0 +1,109 @@
+From bac3c49807f5e02b9b861123ad1d7dd08aeb92a2 Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Mon, 31 Jan 2011 12:35:56 +0000
+Subject: [PATCH 20/20] Various improvements to the manual page (RHBZ#672285).
+
+Cherry picked from commit c9622b6019744e7fe13bd8ccd93374abc7770683.
+---
+ virt-what.pod |   34 +++++++++++++++++++++++-----------
+ 1 files changed, 23 insertions(+), 11 deletions(-)
+
+diff --git a/virt-what.pod b/virt-what.pod
+index 3362bc5..0a7a631 100644
+--- a/virt-what.pod
++++ b/virt-what.pod
+@@ -27,18 +27,19 @@ don't know about or cannot detect.
+ 
+ =item B<hyperv>
+ 
+-This is Hyper-V.
++This is Microsoft Hyper-V hypervisor.
+ 
+ Status: confirmed by RWMJ
+ 
+ =item B<ibm_systemz>
+ 
+-This is an IBM SystemZ (or other S/390) mainframe.  Additional
+-facts listed below may also be printed.
++This is an IBM SystemZ (or other S/390) hardware partitioning system.
++Additional facts listed below may also be printed.
+ 
+ =item B<ibm_systemz-direct>
+ 
+-This is Linux running directly on a IBM SystemZ mainframe.
++This is Linux running directly on a IBM SystemZ hardware partitioning
++system.
+ 
+ This is expected to be a highly unusual configuration - if
+ you see this result you should treat it with suspicion.
+@@ -47,19 +48,26 @@ Status: not confirmed
+ 
+ =item B<ibm_systemz-lpar>
+ 
+-This is Linux running directly on an LPAR on an IBM SystemZ mainframe.
++This is Linux running directly on an LPAR on an IBM SystemZ
++hardware partitioning system.
+ 
+ Status: not confirmed
+ 
+ =item B<ibm_systemz-zvm>
+ 
+-This is a z/VM guest running in an LPAR on an IBM SystemZ mainframe.
++This is a z/VM guest running in an LPAR on an IBM SystemZ
++hardware partitioning system.
+ 
+ Status: confirmed by RWMJ using a Fedora guest running in z/VM
+ 
+ =item B<kvm>
+ 
+-This is KVM.
++This guest is running on the KVM hypervisor using hardware
++acceleration.
++
++Note that if the hypervisor is using software acceleration
++you should I<not> see this, but should see the C<qemu> fact
++instead.
+ 
+ Status: confirmed by RWMJ.
+ 
+@@ -78,7 +86,10 @@ Status: data supplied by Jeffrey Scheel, not confirmed
+ 
+ =item B<qemu>
+ 
+-This is QEMU.
++This is QEMU hypervisor using software emulation.
++
++Note that for KVM (hardware accelerated) guests you should I<not> see
++this.
+ 
+ Status: confirmed by RWMJ.
+ 
+@@ -90,7 +101,8 @@ Status: contributed by Laurent Léonard
+ 
+ =item B<virtage>
+ 
+-This is Hitachi Virtualization Manager (HVM) Virtage logical partitioning.
++This is Hitachi Virtualization Manager (HVM) Virtage
++hardware partitioning system.
+ 
+ Status: data supplied by Bhavna Sarathy, not confirmed
+ 
+@@ -108,13 +120,13 @@ Status: not confirmed
+ 
+ =item B<vmware>
+ 
+-The guest appears to be running on VMware.
++The guest appears to be running on VMware hypervisor.
+ 
+ Status: confirmed by RWMJ
+ 
+ =item B<xen>
+ 
+-The guest appears to be running on Xen.
++The guest appears to be running on Xen hypervisor.
+ 
+ Status: confirmed by RWMJ
+ 
+-- 
+1.7.1
+

@@ -1,0 +1,26 @@
+From c28b6cb884c3c1180f90e426b040169420b47fb9 Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Tue, 18 Jan 2011 15:34:07 +0000
+Subject: [PATCH 04/18] Set LANG=C when running external dmidecode command.
+ (cherry picked from commit 7b3638b1ff426a791ea4cb3fcae78e40278853e8)
+
+---
+ virt-what.in |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/virt-what.in b/virt-what.in
+index 30cce75..2324f12 100644
+--- a/virt-what.in
++++ b/virt-what.in
+@@ -77,7 +77,7 @@ cpuid=`virt-what-cpuid-helper`
+ 
+ # Check for various products in the BIOS information.
+ 
+-dmi=`dmidecode 2>&1`
++dmi=`LANG=C dmidecode 2>&1`
+ 
+ # Check for VMware.
+ # cpuid check added by Chetan Loke.
+-- 
+1.7.1
+

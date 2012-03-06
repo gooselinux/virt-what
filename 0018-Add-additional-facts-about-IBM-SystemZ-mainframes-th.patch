@@ -1,0 +1,197 @@
+From edabc0444da677a3c8720075066f60e19d63b24e Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Thu, 20 Jan 2011 14:42:19 +0000
+Subject: [PATCH 18/18] =?UTF-8?q?Add=20additional=20facts=20about=20IBM=20SystemZ=20mainframes=20(thanks=20Dan=20Hor=C3=A1k).?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add /proc/sysinfo from a real z/VM guest.
+
+This file can in theory be used to detect the following three
+arrangements:
+
+ (1) Linux running in z/VM on an LPAR.
+ (2) Linux running directly on an LPAR.
+ (3) Linux running directly on baremetal (very unlikely!)
+
+Only arrangement (1) has been tested.
+
+Cherry picked from commit 36529e78a60a1c4097e7fe8fa4f3971f8581d864.
+---
+ tests/test-zvm.sh      |    3 +-
+ tests/zvm/proc/sysinfo |   67 ++++++++++++++++++++++++++++++++++++++++++++++++
+ virt-what.in           |   15 ++++++++--
+ virt-what.pod          |   34 ++++++++++++++++++-----
+ 4 files changed, 107 insertions(+), 12 deletions(-)
+ create mode 100644 tests/zvm/proc/sysinfo
+
+diff --git a/tests/test-zvm.sh b/tests/test-zvm.sh
+index f2f3565..0620db0 100755
+--- a/tests/test-zvm.sh
++++ b/tests/test-zvm.sh
+@@ -19,7 +19,8 @@
+ root=tests/zvm
+ 
+ output="$(./virt-what --test-root=$root 2>&1)"
+-expected="zvm"
++expected="ibm_systemz
++ibm_systemz-zvm"
+ 
+ if [ "$output" != "$expected" ]; then
+     echo "$0: test failed because output did not match expected"
+diff --git a/tests/zvm/proc/sysinfo b/tests/zvm/proc/sysinfo
+new file mode 100644
+index 0000000..8710f2d
+--- /dev/null
++++ b/tests/zvm/proc/sysinfo
+@@ -0,0 +1,67 @@
++Manufacturer:         IBM             
++Type:                 2097
++Model:                718              E26             
++Sequence Code:        000000000009C5C2
++Plant:                02  
++Model Capacity:       718              00001390
++Model Perm. Capacity: 718              00001390
++Model Temp. Capacity: 718              00001390
++
++CPUs Total:           34
++CPUs Configured:      18
++CPUs Standby:         0
++CPUs Reserved:        16
++Capability:           904 1350
++Adjustment 02-way:    61500 61500
++Adjustment 03-way:    59260 59500
++Adjustment 04-way:    57480 57300
++Adjustment 05-way:    55800 55700
++Adjustment 06-way:    54700 54300
++Adjustment 07-way:    53600 53100
++Adjustment 08-way:    52500 52040
++Adjustment 09-way:    51200 51000
++Adjustment 10-way:    50100 50000
++Adjustment 11-way:    49000 49020
++Adjustment 12-way:    48000 48120
++Adjustment 13-way:    47200 47300
++Adjustment 14-way:    46400 46500
++Adjustment 15-way:    45600 45800
++Adjustment 16-way:    44800 45200
++Adjustment 17-way:    44300 44680
++Adjustment 18-way:    43900 44120
++Adjustment 19-way:    43500 43640
++Adjustment 20-way:    43100 43200
++Adjustment 21-way:    42600 42740
++Adjustment 22-way:    42300 42360
++Adjustment 23-way:    42000 41980
++Adjustment 24-way:    41700 41600
++Adjustment 25-way:    41400 41240
++Adjustment 26-way:    41100 40960
++Adjustment 27-way:    40800 40680
++Adjustment 28-way:    40400 40360
++Adjustment 29-way:    40100 40120
++Adjustment 30-way:    39800 39840
++Adjustment 31-way:    39500 39560
++Adjustment 32-way:    39200 39300
++Adjustment 33-way:    38900 39100
++Adjustment 34-way:    38600 38840
++Secondary Capability: 904
++
++LPAR Number:          21
++LPAR Characteristics: Shared 
++LPAR Name:            L15     
++LPAR Adjustment:      222
++LPAR CPUs Total:      8
++LPAR CPUs Configured: 4
++LPAR CPUs Standby:    4
++LPAR CPUs Reserved:   0
++LPAR CPUs Dedicated:  0
++LPAR CPUs Shared:     4
++
++VM00 Name:            DEVEL1  
++VM00 Control Program: z/VM    5.3.0   
++VM00 Adjustment:      1000
++VM00 CPUs Total:      4
++VM00 CPUs Configured: 4
++VM00 CPUs Standby:    0
++VM00 CPUs Reserved:   0
+diff --git a/virt-what.in b/virt-what.in
+index 5ab5ae2..d1ac935 100644
+--- a/virt-what.in
++++ b/virt-what.in
+@@ -138,10 +138,19 @@ if echo "$dmi" | grep -q 'Manufacturer.*HITACHI' &&
+     echo virtage
+ fi
+ 
+-# Check for IBM SystemZ (z/VM, not tested whether this applies to Linux
+-# installed directly into an LPAR, we may need a separate test).
++# Check for IBM SystemZ.
+ if grep -q '^vendor_id.*IBM/S390' $root/proc/cpuinfo; then
+-    echo zvm
++    echo ibm_systemz
++    if [ -f $root/proc/sysinfo ]; then
++        if grep -q 'VM.*Control Program.*z/VM' $root/proc/sysinfo; then
++            echo ibm_systemz-zvm
++        elif grep -q '^LPAR' $root/proc/sysinfo; then
++            echo ibm_systemz-lpar
++        else
++            # This is unlikely to be correct.
++            echo ibm_systemz-direct
++        fi
++    fi
+ fi
+ 
+ # Check for Xen.
+diff --git a/virt-what.pod b/virt-what.pod
+index dfc4ca8..21c956a 100644
+--- a/virt-what.pod
++++ b/virt-what.pod
+@@ -31,6 +31,32 @@ This is Hyper-V.
+ 
+ Status: from MSDN description, not tested.
+ 
++=item B<ibm_systemz>
++
++This is an IBM SystemZ (or other S/390) mainframe.  Additional
++facts listed below may also be printed.
++
++=item B<ibm_systemz-direct>
++
++This is Linux running directly on a IBM SystemZ mainframe.
++
++This is expected to be a highly unusual configuration - if
++you see this result you should treat it with suspicion.
++
++Status: not confirmed
++
++=item B<ibm_systemz-lpar>
++
++This is Linux running directly on an LPAR on an IBM SystemZ mainframe.
++
++Status: not confirmed
++
++=item B<ibm_systemz-zvm>
++
++This is a z/VM guest running in an LPAR on an IBM SystemZ mainframe.
++
++Status: confirmed by RWMJ using a Fedora guest running in z/VM
++
+ =item B<kvm>
+ 
+ This is KVM.
+@@ -110,14 +136,6 @@ This is a Xen guest fully virtualized (HVM).
+ 
+ Status: confirmed by RWMJ
+ 
+-=item B<zvm>
+-
+-This is a z/VM guest running on an IBM SystemZ mainframe.
+-
+-Status: confirmed by RWMJ using a Fedora guest running in z/VM.  Not
+-tested whether this also works for Linux installed directly in an
+-LPAR.
+-
+ =back
+ 
+ =head1 IMPORTANT NOTE
+-- 
+1.7.1
+

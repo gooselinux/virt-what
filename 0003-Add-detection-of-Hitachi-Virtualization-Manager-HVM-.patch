@@ -1,0 +1,49 @@
+From 445527111a3a8b939a40d434ccd000c0dc8fe09f Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Tue, 18 Jan 2011 15:32:01 +0000
+Subject: [PATCH 03/18] Add detection of Hitachi Virtualization Manager (HVM) Virtage LPAR.
+
+Data supplied by Bhavna Sarathy.  Not confirmed.
+(cherry picked from commit 8bbf673608a6554c4db01a21cfaa0ab3619d8ade)
+---
+ virt-what.in  |    6 ++++++
+ virt-what.pod |    6 ++++++
+ 2 files changed, 12 insertions(+), 0 deletions(-)
+
+diff --git a/virt-what.in b/virt-what.in
+index ddd6faf..30cce75 100644
+--- a/virt-what.in
++++ b/virt-what.in
+@@ -127,6 +127,12 @@ if grep -q '^vendor_id.*PowerVM Lx86' /proc/cpuinfo; then
+     echo powervm_lx86
+ fi
+ 
++# Check for Hitachi Virtualization Manager (HVM) Virtage logical partitioning.
++if echo "$dmi" | grep -q 'Manufacturer.*HITACHI' &&
++   echo "$dmi" | grep -q 'Product.*HVM LPAR'; then
++    echo virtage
++fi
++
+ # Check for Xen.
+ 
+ if [ "$cpuid" = "XenVMMXenVMM" ]; then
+diff --git a/virt-what.pod b/virt-what.pod
+index d5888c2..7bd7613 100644
+--- a/virt-what.pod
++++ b/virt-what.pod
+@@ -62,6 +62,12 @@ This is a User-Mode Linux (UML) guest.
+ 
+ Status: contributed by Laurent Léonard
+ 
++=item B<virtage>
++
++This is Hitachi Virtualization Manager (HVM) Virtage logical partitioning.
++
++Status: data supplied by Bhavna Sarathy, not confirmed
++
+ =item B<virtualbox>
+ 
+ This is a VirtualBox guest.
+-- 
+1.7.1
+

@@ -1,0 +1,164 @@
+From 5273980cc16dcf8e2fefd7e32f09182ec3402e85 Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Thu, 20 Jan 2011 15:57:59 +0000
+Subject: [PATCH 16/18] Add /sys/hypervisor test files from RHEL 5 Xen Dom0.
+ (cherry picked from commit a70ac5e9809724a80edb633dc23df512fdffab5e)
+
+---
+ Makefile.am                                        |   14 ++++++++++++++
+ .../sys/hypervisor/compilation/compile_date        |    1 +
+ .../sys/hypervisor/compilation/compiled_by         |    1 +
+ .../sys/hypervisor/compilation/compiler            |    1 +
+ .../sys/hypervisor/properties/capabilities         |    1 +
+ .../sys/hypervisor/properties/changeset            |    1 +
+ .../sys/hypervisor/properties/pagesize             |    1 +
+ .../sys/hypervisor/properties/virtual_start        |    1 +
+ .../sys/hypervisor/properties/writable_pt          |    1 +
+ tests/rhel5-xen-dom0/sys/hypervisor/type           |    1 +
+ tests/rhel5-xen-dom0/sys/hypervisor/uuid           |    1 +
+ tests/rhel5-xen-dom0/sys/hypervisor/version/extra  |    1 +
+ tests/rhel5-xen-dom0/sys/hypervisor/version/major  |    1 +
+ tests/rhel5-xen-dom0/sys/hypervisor/version/minor  |    1 +
+ tests/rhel5-xen-dom0/sys/hypervisor/vmcoreinfo     |    1 +
+ 15 files changed, 28 insertions(+), 0 deletions(-)
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/compilation/compile_date
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiled_by
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiler
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/properties/capabilities
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/properties/changeset
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/properties/pagesize
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/properties/virtual_start
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/properties/writable_pt
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/type
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/uuid
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/version/extra
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/version/major
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/version/minor
+ create mode 100644 tests/rhel5-xen-dom0/sys/hypervisor/vmcoreinfo
+
+diff --git a/Makefile.am b/Makefile.am
+index 5d6563b..a460a7f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -49,6 +49,20 @@ EXTRA_DIST = \
+ 	tests/rhel5-xen-dom0/sbin/dmidecode \
+ 	tests/rhel5-xen-dom0/sbin/id \
+ 	tests/rhel5-xen-dom0/sbin/virt-what-cpuid-helper \
++	tests/rhel5-xen-dom0/sys/hypervisor/properties/pagesize \
++	tests/rhel5-xen-dom0/sys/hypervisor/properties/changeset \
++	tests/rhel5-xen-dom0/sys/hypervisor/properties/virtual_start \
++	tests/rhel5-xen-dom0/sys/hypervisor/properties/capabilities \
++	tests/rhel5-xen-dom0/sys/hypervisor/properties/writable_pt \
++	tests/rhel5-xen-dom0/sys/hypervisor/type \
++	tests/rhel5-xen-dom0/sys/hypervisor/vmcoreinfo \
++	tests/rhel5-xen-dom0/sys/hypervisor/version/minor \
++	tests/rhel5-xen-dom0/sys/hypervisor/version/major \
++	tests/rhel5-xen-dom0/sys/hypervisor/version/extra \
++	tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiler \
++	tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiled_by \
++	tests/rhel5-xen-dom0/sys/hypervisor/compilation/compile_date \
++	tests/rhel5-xen-dom0/sys/hypervisor/uuid \
+ 	tests/rhel5-xen-domU-hvm/proc/cpuinfo \
+ 	tests/rhel5-xen-domU-hvm/proc/self/status \
+ 	tests/rhel5-xen-domU-hvm/sbin/dmidecode \
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compile_date b/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compile_date
+new file mode 100644
+index 0000000..054026b
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compile_date
+@@ -0,0 +1 @@
++Sun Dec 19 14:18:54 EST 2010
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiled_by b/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiled_by
+new file mode 100644
+index 0000000..5cbca69
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiled_by
+@@ -0,0 +1 @@
++mockbuild
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiler b/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiler
+new file mode 100644
+index 0000000..7c48582
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/compilation/compiler
+@@ -0,0 +1 @@
++gcc version 4.1.2 20080704 (Red Hat 4.1.2-50)
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/properties/capabilities b/tests/rhel5-xen-dom0/sys/hypervisor/properties/capabilities
+new file mode 100644
+index 0000000..bc232bb
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/properties/capabilities
+@@ -0,0 +1 @@
++xen-3.0-x86_64 xen-3.0-x86_32p hvm-3.0-x86_32 hvm-3.0-x86_32p hvm-3.0-x86_64 
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/properties/changeset b/tests/rhel5-xen-dom0/sys/hypervisor/properties/changeset
+new file mode 100644
+index 0000000..a9489ec
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/properties/changeset
+@@ -0,0 +1 @@
++unavailable
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/properties/pagesize b/tests/rhel5-xen-dom0/sys/hypervisor/properties/pagesize
+new file mode 100644
+index 0000000..83b33d2
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/properties/pagesize
+@@ -0,0 +1 @@
++1000
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/properties/virtual_start b/tests/rhel5-xen-dom0/sys/hypervisor/properties/virtual_start
+new file mode 100644
+index 0000000..aeac42b
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/properties/virtual_start
+@@ -0,0 +1 @@
++ffff800000000000
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/properties/writable_pt b/tests/rhel5-xen-dom0/sys/hypervisor/properties/writable_pt
+new file mode 100644
+index 0000000..f5c8955
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/properties/writable_pt
+@@ -0,0 +1 @@
++32
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/type b/tests/rhel5-xen-dom0/sys/hypervisor/type
+new file mode 100644
+index 0000000..1be72f4
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/type
+@@ -0,0 +1 @@
++xen
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/uuid b/tests/rhel5-xen-dom0/sys/hypervisor/uuid
+new file mode 100644
+index 0000000..44964b1
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/uuid
+@@ -0,0 +1 @@
++00000000-0000-0000-0000-000000000000
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/version/extra b/tests/rhel5-xen-dom0/sys/hypervisor/version/extra
+new file mode 100644
+index 0000000..5020d8e
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/version/extra
+@@ -0,0 +1 @@
++.2-238.el5
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/version/major b/tests/rhel5-xen-dom0/sys/hypervisor/version/major
+new file mode 100644
+index 0000000..00750ed
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/version/major
+@@ -0,0 +1 @@
++3
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/version/minor b/tests/rhel5-xen-dom0/sys/hypervisor/version/minor
+new file mode 100644
+index 0000000..d00491f
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/version/minor
+@@ -0,0 +1 @@
++1
+diff --git a/tests/rhel5-xen-dom0/sys/hypervisor/vmcoreinfo b/tests/rhel5-xen-dom0/sys/hypervisor/vmcoreinfo
+new file mode 100644
+index 0000000..a99a306
+--- /dev/null
++++ b/tests/rhel5-xen-dom0/sys/hypervisor/vmcoreinfo
+@@ -0,0 +1 @@
++7e309360 1000
+-- 
+1.7.1
+

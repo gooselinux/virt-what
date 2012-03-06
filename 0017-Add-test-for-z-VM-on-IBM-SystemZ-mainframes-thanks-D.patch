@@ -1,0 +1,230 @@
+From 09d2fde48bfaa644b23fb6c9a17e8059c236c78e Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Thu, 20 Jan 2011 08:49:31 -0500
+Subject: [PATCH 17/18] =?UTF-8?q?Add=20test=20for=20z/VM=20on=20IBM=20SystemZ=20mainframes=20(thanks=20Dan=20Hor=C3=A1k).?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Cherry picked from commit 37f7b6e5f79d61ec4f8967f3de2ec63420aec894.
+---
+ Makefile.am                           |   11 ++++++-
+ tests/test-zvm.sh                     |   35 +++++++++++++++++++++++
+ tests/zvm/proc/cpuinfo                |    5 +++
+ tests/zvm/proc/self/status            |   49 +++++++++++++++++++++++++++++++++
+ tests/zvm/sbin/dmidecode              |    3 ++
+ tests/zvm/sbin/id                     |    2 +
+ tests/zvm/sbin/virt-what-cpuid-helper |    2 +
+ virt-what.in                          |    6 ++++
+ virt-what.pod                         |    8 +++++
+ 9 files changed, 119 insertions(+), 2 deletions(-)
+ create mode 100755 tests/test-zvm.sh
+ create mode 100644 tests/zvm/proc/cpuinfo
+ create mode 100644 tests/zvm/proc/self/status
+ create mode 100755 tests/zvm/sbin/dmidecode
+ create mode 100755 tests/zvm/sbin/id
+ create mode 100755 tests/zvm/sbin/virt-what-cpuid-helper
+
+diff --git a/Makefile.am b/Makefile.am
+index a460a7f..9601be9 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -91,13 +91,19 @@ EXTRA_DIST = \
+ 	tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiled_by \
+ 	tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compile_date \
+ 	tests/rhel5-xen-domU-pv/sys/hypervisor/uuid \
++	tests/zvm/proc/cpuinfo \
++	tests/zvm/proc/self/status \
++	tests/zvm/sbin/dmidecode \
++	tests/zvm/sbin/id \
++	tests/zvm/sbin/virt-what-cpuid-helper \
+ 	tests/test-baremetal.sh \
+ 	tests/test-esx4.1.sh \
+ 	tests/test-kvm.sh \
+ 	tests/test-qemu.sh \
+ 	tests/test-rhel5-xen-dom0.sh \
+ 	tests/test-rhel5-xen-domU-hvm.sh \
+-	tests/test-rhel5-xen-domU-pv.sh
++	tests/test-rhel5-xen-domU-pv.sh \
++	tests/test-zvm.sh
+ 
+ CLEANFILES = virt-what.1 virt-what.txt
+ 
+@@ -122,4 +128,5 @@ TESTS = \
+ 	tests/test-qemu.sh \
+ 	tests/test-rhel5-xen-dom0.sh \
+ 	tests/test-rhel5-xen-domU-hvm.sh \
+-	tests/test-rhel5-xen-domU-pv.sh
++	tests/test-rhel5-xen-domU-pv.sh \
++	tests/test-zvm.sh
+diff --git a/tests/test-zvm.sh b/tests/test-zvm.sh
+new file mode 100755
+index 0000000..f2f3565
+--- /dev/null
++++ b/tests/test-zvm.sh
+@@ -0,0 +1,35 @@
++# Test for z/VM on IBM SystemZ mainframe.
++# (Thanks Dan Horák for supplying access).
++# Copyright (C) 2008-2011 Red Hat Inc.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++
++root=tests/zvm
++
++output="$(./virt-what --test-root=$root 2>&1)"
++expected="zvm"
++
++if [ "$output" != "$expected" ]; then
++    echo "$0: test failed because output did not match expected"
++    echo "Expected output was:"
++    echo "----------------------------------------"
++    echo "$expected"
++    echo "----------------------------------------"
++    echo "But the actual output of the program was:"
++    echo "----------------------------------------"
++    echo "$output"
++    echo "----------------------------------------"
++    exit 1
++fi
+diff --git a/tests/zvm/proc/cpuinfo b/tests/zvm/proc/cpuinfo
+new file mode 100644
+index 0000000..e252daf
+--- /dev/null
++++ b/tests/zvm/proc/cpuinfo
+@@ -0,0 +1,5 @@
++vendor_id       : IBM/S390
++# processors    : 1
++bogomips per cpu: 11061.00
++features	: esan3 zarch stfle msa ldisp eimm dfp etf3eh highgprs 
++processor 0: version = FF,  identification = 15C5C2,  machine = 2097
+diff --git a/tests/zvm/proc/self/status b/tests/zvm/proc/self/status
+new file mode 100644
+index 0000000..de400c0
+--- /dev/null
++++ b/tests/zvm/proc/self/status
+@@ -0,0 +1,49 @@
++Name:	cat
++State:	R (running)
++Tgid:	8722
++Pid:	8722
++PPid:	569
++TracerPid:	0
++Uid:	0	0	0	0
++Gid:	0	0	0	0
++Utrace:	0
++FDSize:	256
++Groups:	0 1 2 3 4 6 10 
++VmPeak:	   99096 kB
++VmSize:	   99096 kB
++VmLck:	       0 kB
++VmHWM:	     564 kB
++VmRSS:	     564 kB
++VmData:	     176 kB
++VmStk:	     136 kB
++VmExe:	      48 kB
++VmLib:	   98720 kB
++VmPTE:	      14 kB
++VmSwap:	       0 kB
++Threads:	1
++SigQ:	0/7958
++SigPnd:	0000000000000000
++ShdPnd:	0000000000000000
++SigBlk:	0000000000000000
++SigIgn:	0000000000000000
++SigCgt:	0000000000000000
++CapInh:	0000000000000000
++CapPrm:	ffffffffffffffff
++CapEff:	ffffffffffffffff
++CapBnd:	ffffffffffffffff
++Cpus_allowed:	ffffffff,ffffffff
++Cpus_allowed_list:	0-63
++Mems_allowed:	1
++Mems_allowed_list:	0
++task: 000000007c0fae50, ksp: 000000007c3d3eb8
++User PSW : 0705c00180000000 00000200001336b8
++User GPRS: 000003ff00000000 00000200001f3748 0000000000000003 000000008000f000
++           0000000000008000 000000008000e020 0000000000000000 000003ffffaa75e0
++           0000000000008000 0000000000000001 000000008000f000 0000000000000003
++           000000008000c348 0000000000008000 0000000080006746 000003ffffaa70b8
++User ACRS: 00000200 00223f10 00000000 00000000
++           00000000 00000000 00000000 00000000
++           00000000 00000000 00000000 00000000
++           00000000 00000000 00000000 00000000
++voluntary_ctxt_switches:	0
++nonvoluntary_ctxt_switches:	0
+diff --git a/tests/zvm/sbin/dmidecode b/tests/zvm/sbin/dmidecode
+new file mode 100755
+index 0000000..f005a9b
+--- /dev/null
++++ b/tests/zvm/sbin/dmidecode
+@@ -0,0 +1,3 @@
++#!/bin/sh -
++# dmidecode is not available on Fedora on s/390
++exit 1
+diff --git a/tests/zvm/sbin/id b/tests/zvm/sbin/id
+new file mode 100755
+index 0000000..6c704ac
+--- /dev/null
++++ b/tests/zvm/sbin/id
+@@ -0,0 +1,2 @@
++#!/bin/sh -
++echo 0
+diff --git a/tests/zvm/sbin/virt-what-cpuid-helper b/tests/zvm/sbin/virt-what-cpuid-helper
+new file mode 100755
+index 0000000..b446009
+--- /dev/null
++++ b/tests/zvm/sbin/virt-what-cpuid-helper
+@@ -0,0 +1,2 @@
++#!/bin/sh -
++echo
+diff --git a/virt-what.in b/virt-what.in
+index 7754cd9..5ab5ae2 100644
+--- a/virt-what.in
++++ b/virt-what.in
+@@ -138,6 +138,12 @@ if echo "$dmi" | grep -q 'Manufacturer.*HITACHI' &&
+     echo virtage
+ fi
+ 
++# Check for IBM SystemZ (z/VM, not tested whether this applies to Linux
++# installed directly into an LPAR, we may need a separate test).
++if grep -q '^vendor_id.*IBM/S390' $root/proc/cpuinfo; then
++    echo zvm
++fi
++
+ # Check for Xen.
+ 
+ if [ "$cpuid" = "XenVMMXenVMM" ]; then
+diff --git a/virt-what.pod b/virt-what.pod
+index 7bd7613..dfc4ca8 100644
+--- a/virt-what.pod
++++ b/virt-what.pod
+@@ -110,6 +110,14 @@ This is a Xen guest fully virtualized (HVM).
+ 
+ Status: confirmed by RWMJ
+ 
++=item B<zvm>
++
++This is a z/VM guest running on an IBM SystemZ mainframe.
++
++Status: confirmed by RWMJ using a Fedora guest running in z/VM.  Not
++tested whether this also works for Linux installed directly in an
++LPAR.
++
+ =back
+ 
+ =head1 IMPORTANT NOTE
+-- 
+1.7.1
+

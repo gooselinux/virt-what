@@ -1,0 +1,165 @@
+From b0bdeceac78703ec4313e07807d31b842e74c246 Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Thu, 20 Jan 2011 15:38:30 +0000
+Subject: [PATCH 14/18] Add support for Linux kernels with pv_ops running on Xen.
+
+These would be found for example on Amazon EC2 or Citrix Xen.
+
+This also adds all the extra files found under /sys/hypervisor
+on this platform.
+(cherry picked from commit 55cf13ae4a00c30b55fe508f544406dce05bdb8d)
+---
+ .../sys/hypervisor/compilation/compile_date        |    1 +
+ .../sys/hypervisor/compilation/compiled_by         |    1 +
+ .../sys/hypervisor/compilation/compiler            |    1 +
+ .../sys/hypervisor/properties/capabilities         |    1 +
+ .../sys/hypervisor/properties/changeset            |    1 +
+ .../sys/hypervisor/properties/pagesize             |    1 +
+ .../sys/hypervisor/properties/virtual_start        |    1 +
+ .../sys/hypervisor/properties/writable_pt          |    1 +
+ tests/rhel5-xen-domU-pv/sys/hypervisor/type        |    1 +
+ tests/rhel5-xen-domU-pv/sys/hypervisor/uuid        |    1 +
+ .../rhel5-xen-domU-pv/sys/hypervisor/version/extra |    1 +
+ .../rhel5-xen-domU-pv/sys/hypervisor/version/major |    1 +
+ .../rhel5-xen-domU-pv/sys/hypervisor/version/minor |    1 +
+ tests/rhel5-xen-domU-pv/sys/hypervisor/vmcoreinfo  |    1 +
+ virt-what.in                                       |   11 ++++++-----
+ 15 files changed, 20 insertions(+), 5 deletions(-)
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compile_date
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiled_by
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiler
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/properties/capabilities
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/properties/changeset
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/properties/pagesize
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/properties/virtual_start
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/properties/writable_pt
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/type
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/uuid
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/version/extra
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/version/major
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/version/minor
+ create mode 100644 tests/rhel5-xen-domU-pv/sys/hypervisor/vmcoreinfo
+
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compile_date b/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compile_date
+new file mode 100644
+index 0000000..054026b
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compile_date
+@@ -0,0 +1 @@
++Sun Dec 19 14:18:54 EST 2010
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiled_by b/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiled_by
+new file mode 100644
+index 0000000..5cbca69
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiled_by
+@@ -0,0 +1 @@
++mockbuild
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiler b/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiler
+new file mode 100644
+index 0000000..7c48582
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/compilation/compiler
+@@ -0,0 +1 @@
++gcc version 4.1.2 20080704 (Red Hat 4.1.2-50)
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/capabilities b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/capabilities
+new file mode 100644
+index 0000000..bc232bb
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/capabilities
+@@ -0,0 +1 @@
++xen-3.0-x86_64 xen-3.0-x86_32p hvm-3.0-x86_32 hvm-3.0-x86_32p hvm-3.0-x86_64 
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/changeset b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/changeset
+new file mode 100644
+index 0000000..a9489ec
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/changeset
+@@ -0,0 +1 @@
++unavailable
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/pagesize b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/pagesize
+new file mode 100644
+index 0000000..83b33d2
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/pagesize
+@@ -0,0 +1 @@
++1000
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/virtual_start b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/virtual_start
+new file mode 100644
+index 0000000..aeac42b
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/virtual_start
+@@ -0,0 +1 @@
++ffff800000000000
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/writable_pt b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/writable_pt
+new file mode 100644
+index 0000000..f5c8955
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/properties/writable_pt
+@@ -0,0 +1 @@
++32
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/type b/tests/rhel5-xen-domU-pv/sys/hypervisor/type
+new file mode 100644
+index 0000000..1be72f4
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/type
+@@ -0,0 +1 @@
++xen
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/uuid b/tests/rhel5-xen-domU-pv/sys/hypervisor/uuid
+new file mode 100644
+index 0000000..beaef4c
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/uuid
+@@ -0,0 +1 @@
++e7a4b45e-2172-c900-4ba4-dd8796ce14cb
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/version/extra b/tests/rhel5-xen-domU-pv/sys/hypervisor/version/extra
+new file mode 100644
+index 0000000..5020d8e
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/version/extra
+@@ -0,0 +1 @@
++.2-238.el5
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/version/major b/tests/rhel5-xen-domU-pv/sys/hypervisor/version/major
+new file mode 100644
+index 0000000..00750ed
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/version/major
+@@ -0,0 +1 @@
++3
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/version/minor b/tests/rhel5-xen-domU-pv/sys/hypervisor/version/minor
+new file mode 100644
+index 0000000..d00491f
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/version/minor
+@@ -0,0 +1 @@
++1
+diff --git a/tests/rhel5-xen-domU-pv/sys/hypervisor/vmcoreinfo b/tests/rhel5-xen-domU-pv/sys/hypervisor/vmcoreinfo
+new file mode 100644
+index 0000000..b748e2d
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sys/hypervisor/vmcoreinfo
+@@ -0,0 +1 @@
++0 0
+diff --git a/virt-what.in b/virt-what.in
+index e311067..7754cd9 100644
+--- a/virt-what.in
++++ b/virt-what.in
+@@ -151,11 +151,12 @@ elif [ -f $root/proc/xen/capabilities ]; then
+         echo xen-domU
+     fi
+     is_xen=1
+-elif [ -d $root/proc/xen ]; then
+-    # This directory can be present when Xen paravirt drivers are
+-    # installed, even on baremetal.  Don't confuse people by
+-    # printing anything.
+-    :
++elif [ -f $root/sys/hypervisor/type ] &&
++    grep -q "xen" $root/sys/hypervisor/type; then
++    # Ordinary kernel with pv_ops.  There does not seem to be
++    # enough information at present to tell whether this is dom0
++    # or domU.  XXX
++    echo xen
+ fi
+ 
+ # Check for QEMU/KVM.
+-- 
+1.7.1
+

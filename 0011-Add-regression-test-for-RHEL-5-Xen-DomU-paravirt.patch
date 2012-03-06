@@ -1,0 +1,223 @@
+From 16f89a01316d67ff0c52c406dd1fd526318d39df Mon Sep 17 00:00:00 2001
+From: Richard W.M. Jones <rjones@redhat.com>
+Date: Wed, 19 Jan 2011 17:33:29 +0000
+Subject: [PATCH 11/18] Add regression test for RHEL 5 Xen DomU paravirt.
+ (cherry picked from commit 3cfd879573fb492264c6610959fae03ae926452f)
+
+---
+ Makefile.am                                        |   13 +++++--
+ tests/rhel5-xen-domU-pv/proc/cpuinfo               |   23 ++++++++++++
+ tests/rhel5-xen-domU-pv/proc/self/status           |   36 ++++++++++++++++++++
+ tests/rhel5-xen-domU-pv/proc/xen/balloon           |    6 +++
+ tests/rhel5-xen-domU-pv/sbin/dmidecode             |    6 +++
+ tests/rhel5-xen-domU-pv/sbin/id                    |    2 +
+ .../rhel5-xen-domU-pv/sbin/virt-what-cpuid-helper  |    2 +
+ tests/test-rhel5-xen-domU-pv.sh                    |   35 +++++++++++++++++++
+ 8 files changed, 119 insertions(+), 4 deletions(-)
+ create mode 100644 tests/rhel5-xen-domU-pv/proc/cpuinfo
+ create mode 100644 tests/rhel5-xen-domU-pv/proc/self/status
+ create mode 100644 tests/rhel5-xen-domU-pv/proc/xen/balloon
+ create mode 100644 tests/rhel5-xen-domU-pv/proc/xen/capabilities
+ create mode 100644 tests/rhel5-xen-domU-pv/proc/xen/privcmd
+ create mode 100644 tests/rhel5-xen-domU-pv/proc/xen/xenbus
+ create mode 100755 tests/rhel5-xen-domU-pv/sbin/dmidecode
+ create mode 100755 tests/rhel5-xen-domU-pv/sbin/id
+ create mode 100755 tests/rhel5-xen-domU-pv/sbin/virt-what-cpuid-helper
+ create mode 100755 tests/test-rhel5-xen-domU-pv.sh
+
+diff --git a/Makefile.am b/Makefile.am
+index f6750ba..85dd8a3 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -43,11 +43,17 @@ EXTRA_DIST = \
+ 	tests/rhel5-xen-dom0/sbin/dmidecode \
+ 	tests/rhel5-xen-dom0/sbin/id \
+ 	tests/rhel5-xen-dom0/sbin/virt-what-cpuid-helper \
++	tests/rhel5-xen-domU-pv/proc/cpuinfo \
++	tests/rhel5-xen-domU-pv/proc/self/status \
++	tests/rhel5-xen-domU-pv/sbin/dmidecode \
++	tests/rhel5-xen-domU-pv/sbin/id \
++	tests/rhel5-xen-domU-pv/sbin/virt-what-cpuid-helper \
+ 	tests/test-baremetal.sh \
+ 	tests/test-esx4.1.sh \
+ 	tests/test-kvm.sh \
+ 	tests/test-qemu.sh \
+-	tests/test-rhel5-xen-dom0.sh
++	tests/test-rhel5-xen-dom0.sh \
++	tests/test-rhel5-xen-domU-pv.sh
+ 
+ CLEANFILES = virt-what.1 virt-what.txt
+ 
+@@ -70,6 +76,5 @@ TESTS = \
+ 	tests/test-esx4.1.sh \
+ 	tests/test-kvm.sh \
+ 	tests/test-qemu.sh \
+-	tests/test-rhel5-xen-dom0.sh
+-# tests/test-virtualbox.sh \
+-# tests/test-xen-domU.sh
++	tests/test-rhel5-xen-dom0.sh \
++	tests/test-rhel5-xen-domU-pv.sh
+diff --git a/tests/rhel5-xen-domU-pv/proc/cpuinfo b/tests/rhel5-xen-domU-pv/proc/cpuinfo
+new file mode 100644
+index 0000000..a577f7d
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/proc/cpuinfo
+@@ -0,0 +1,23 @@
++processor	: 0
++vendor_id	: GenuineIntel
++cpu family	: 6
++model		: 15
++model name	: Intel(R) Core(TM)2 CPU         T7600  @ 2.33GHz
++stepping	: 6
++cpu MHz		: 2327.500
++cache size	: 4096 KB
++physical id	: 0
++siblings	: 1
++core id		: 0
++cpu cores	: 1
++fpu		: yes
++fpu_exception	: yes
++cpuid level	: 10
++wp		: yes
++flags		: fpu tsc msr pae cx8 apic cmov pat clflush acpi mmx fxsr sse sse2 ss ht syscall nx lm constant_tsc pni vmx est ssse3 cx16 lahf_lm
++bogomips	: 5838.82
++clflush size	: 64
++cache_alignment	: 64
++address sizes	: 36 bits physical, 48 bits virtual
++power management:
++
+diff --git a/tests/rhel5-xen-domU-pv/proc/self/status b/tests/rhel5-xen-domU-pv/proc/self/status
+new file mode 100644
+index 0000000..523419f
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/proc/self/status
+@@ -0,0 +1,36 @@
++Name:	cat
++State:	R (running)
++SleepAVG:	88%
++Tgid:	2937
++Pid:	2937
++PPid:	2891
++TracerPid:	0
++Uid:	0	0	0	0
++Gid:	0	0	0	0
++FDSize:	256
++Groups:	0 1 2 3 4 6 10 
++VmPeak:	   58968 kB
++VmSize:	   58968 kB
++VmLck:	       0 kB
++VmHWM:	     540 kB
++VmRSS:	     540 kB
++VmData:	     180 kB
++VmStk:	      88 kB
++VmExe:	      20 kB
++VmLib:	    1448 kB
++VmPTE:	      32 kB
++StaBrk:	00605000 kB
++Brk:	034be000 kB
++StaStk:	7fff7942be10 kB
++Threads:	1
++SigQ:	1/6208
++SigPnd:	0000000000000000
++ShdPnd:	0000000000000000
++SigBlk:	0000000000000000
++SigIgn:	0000000000000000
++SigCgt:	0000000000000000
++CapInh:	0000000000000000
++CapPrm:	00000000fffffeff
++CapEff:	00000000fffffeff
++Cpus_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
++Mems_allowed:	1
+diff --git a/tests/rhel5-xen-domU-pv/proc/xen/balloon b/tests/rhel5-xen-domU-pv/proc/xen/balloon
+new file mode 100644
+index 0000000..bfe9ff0
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/proc/xen/balloon
+@@ -0,0 +1,6 @@
++Current allocation:   786432 kB
++Requested target:     786432 kB
++Low-mem balloon:        8192 kB
++High-mem balloon:          0 kB
++Driver pages:              0 kB
++Xen hard limit:          ??? kB
+diff --git a/tests/rhel5-xen-domU-pv/proc/xen/capabilities b/tests/rhel5-xen-domU-pv/proc/xen/capabilities
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/rhel5-xen-domU-pv/proc/xen/privcmd b/tests/rhel5-xen-domU-pv/proc/xen/privcmd
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/rhel5-xen-domU-pv/proc/xen/xenbus b/tests/rhel5-xen-domU-pv/proc/xen/xenbus
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/rhel5-xen-domU-pv/sbin/dmidecode b/tests/rhel5-xen-domU-pv/sbin/dmidecode
+new file mode 100755
+index 0000000..cd96f11
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sbin/dmidecode
+@@ -0,0 +1,6 @@
++#!/bin/sh -
++# See https://bugzilla.redhat.com/show_bug.cgi?id=210295
++cat <<'EOF'
++# dmidecode 2.10
++/dev/mem: mmap: Bad address
++EOF
+diff --git a/tests/rhel5-xen-domU-pv/sbin/id b/tests/rhel5-xen-domU-pv/sbin/id
+new file mode 100755
+index 0000000..6c704ac
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sbin/id
+@@ -0,0 +1,2 @@
++#!/bin/sh -
++echo 0
+diff --git a/tests/rhel5-xen-domU-pv/sbin/virt-what-cpuid-helper b/tests/rhel5-xen-domU-pv/sbin/virt-what-cpuid-helper
+new file mode 100755
+index 0000000..b446009
+--- /dev/null
++++ b/tests/rhel5-xen-domU-pv/sbin/virt-what-cpuid-helper
+@@ -0,0 +1,2 @@
++#!/bin/sh -
++echo
+diff --git a/tests/test-rhel5-xen-domU-pv.sh b/tests/test-rhel5-xen-domU-pv.sh
+new file mode 100755
+index 0000000..6561605
+--- /dev/null
++++ b/tests/test-rhel5-xen-domU-pv.sh
+@@ -0,0 +1,35 @@
++# Test for RHEL 5 Xen DomU paravirt.
++# Copyright (C) 2008-2011 Red Hat Inc.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++
++root=tests/rhel5-xen-domU-pv
++
++output="$(./virt-what --test-root=$root 2>&1)"
++expected="xen
++xen-domU"
++
++if [ "$output" != "$expected" ]; then
++    echo "$0: test failed because output did not match expected"
++    echo "Expected output was:"
++    echo "----------------------------------------"
++    echo "$expected"
++    echo "----------------------------------------"
++    echo "But the actual output of the program was:"
++    echo "----------------------------------------"
++    echo "$output"
++    echo "----------------------------------------"
++    exit 1
++fi
+-- 
+1.7.1
+
